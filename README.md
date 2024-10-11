@@ -1,1 +1,1 @@
-# Algorithms-on-graphs
+# Алгоритмы на графах
