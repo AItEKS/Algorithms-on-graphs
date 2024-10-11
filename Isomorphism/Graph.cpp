@@ -20,7 +20,7 @@ Graph::Graph(const std::vector<std::vector<unsigned long long int>>& weightsMatr
 
 void Graph::Add(size_t a, size_t b, int weight) {
     matrix[a][b] = weight;
-    //matrix[b][a] = weight;
+    matrix[b][a] = weight;
 }
 
 void Graph::Copy(const Graph& graph) {
