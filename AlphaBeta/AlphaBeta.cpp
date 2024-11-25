@@ -1,4 +1,4 @@
-﻿#include "AlphaBeta.h"
+#include "AlphaBeta.h"
 
 
 bool ConnectFourGame::isWinningMove(Player player)
@@ -25,7 +25,7 @@ bool ConnectFourGame::isWinningMove(Player player)
 					board[row + 2][col + 2] == player &&
 					board[row + 3][col + 3] == player) return true;
 
-				if (row + 3 < ROWS && col - 3 > 0 &&
+				if (row + 3 < ROWS && col - 3 >= 0 &&
 					board[row + 1][col - 1] == player &&
 					board[row + 2][col - 2] == player &&
 					board[row + 3][col - 3] == player) return true;
@@ -38,18 +38,18 @@ bool ConnectFourGame::isWinningMove(Player player)
 int ConnectFourGame::evaluteBoard(Player player)
 {
 	int score = 0;
-	Player opponet = (player == PLAYER1) ? PLAYER2 : PLAYER1;
-	
-	auto countScore = [&](int count) {
-		switch (count) 
+	Player opponent = (player == PLAYER1) ? PLAYER2 : PLAYER1;
+
+	auto countScore = [&](int count, bool isOpponent) {
+		switch (count)
 		{
-			case 4: return 10000;          // 4 в ряд
-			case 3: return 500;            // 3 в ряд
-			case 2: return 10;             // 2 в ряд
-			case 1: return 1;              // 1 фишка
-			default: return 0;             // ничего не даем
+		case 4: return isOpponent ? -10000 : 10000; // 4 в ряд (противник - большой штраф)
+		case 3: return isOpponent ? -500 : 500;     // 3 в ряд (противник - штраф)
+		case 2: return isOpponent ? -10 : 10;       // 2 в ряд
+		case 1: return isOpponent ? -1 : 1;         // 1 фишка
+		default: return 0;                          // ничего не даем
 		}
-	};
+		};
 
 	for (int row = 0; row < ROWS; row++)
 	{
@@ -57,48 +57,52 @@ int ConnectFourGame::evaluteBoard(Player player)
 		{
 			if (board[row][col] == NONE) continue;
 
+			// Горизонтальная проверка (-)
 			if (col + 3 < COLS)
 			{
 				int countPlayer = 0, countOpponent = 0;
 				for (int i = 0; i < 4; i++)
 				{
 					if (board[row][col + i] == player) countPlayer++;
-					else if (board[row][col + i] == opponet) countOpponent++;
+					else if (board[row][col + i] == opponent) countOpponent++;
 				}
-				score += (countScore(countPlayer) - countScore(countOpponent));
+				score += (countScore(countPlayer, false) + countScore(countOpponent, true));
 			}
 
+			// Вертикальная проверка (|)
 			if (row + 3 < ROWS)
 			{
 				int countPlayer = 0, countOpponent = 0;
 				for (int i = 0; i < 4; i++)
 				{
 					if (board[row + i][col] == player) countPlayer++;
-					else if (board[row + i][col] == opponet) countOpponent++;
+					else if (board[row + i][col] == opponent) countOpponent++;
 				}
-				score += (countScore(countPlayer) - countScore(countOpponent));
+				score += (countScore(countPlayer, false) + countScore(countOpponent, true));
 			}
 
+			// Диагональная проверка (\)
 			if (row + 3 < ROWS && col + 3 < COLS)
 			{
 				int countPlayer = 0, countOpponent = 0;
 				for (int i = 0; i < 4; i++)
 				{
 					if (board[row + i][col + i] == player) countPlayer++;
-					else if (board[row + i][col + i] == opponet) countOpponent++;
+					else if (board[row + i][col + i] == opponent) countOpponent++;
 				}
-				score += (countScore(countPlayer) - countScore(countOpponent));
+				score += (countScore(countPlayer, false) + countScore(countOpponent, true));
 			}
 
+			// Диагональная проверка (/)
 			if (row + 3 < ROWS && col - 3 >= 0)
 			{
 				int countPlayer = 0, countOpponent = 0;
 				for (int i = 0; i < 4; i++)
 				{
 					if (board[row + i][col - i] == player) countPlayer++;
-					else if (board[row + i][col - i] == opponet) countOpponent++;
+					else if (board[row + i][col - i] == opponent) countOpponent++;
 				}
-				score += (countScore(countPlayer) - countScore(countOpponent));
+				score += (countScore(countPlayer, false) + countScore(countOpponent, true));
 			}
 		}
 	}
@@ -129,36 +133,40 @@ int ConnectFourGame::GetAvailableRow(int column)
 
 int ConnectFourGame::AlphaBeta(int depth, int alpha, int beta, Player currentPlayer)
 {
-	if (depth == 0 || isWinningMove(PLAYER1) || isWinningMove(PLAYER2)) return evaluteBoard(currentPlayer);
+	if (depth == 0) {
+		return evaluteBoard(currentPlayer);
+	}
+
+	bool win = isWinningMove(currentPlayer);
+	if (win) return (currentPlayer == PLAYER1) ? 10000 : -10000;
 
 	if (currentPlayer == PLAYER1)
 	{
-		int maxEvalute = std::numeric_limits<int>::min();
+		int maxEvaluate = std::numeric_limits<int>::min();
 		for (const auto& move : GetAvailableMoves())
 		{
 			board[move.row][move.column] = PLAYER1;
 			int eval = AlphaBeta(depth - 1, alpha, beta, PLAYER2);
 			board[move.row][move.column] = NONE;
-			maxEvalute = std::max(maxEvalute, eval);
+			maxEvaluate = std::max(maxEvaluate, eval);
 			alpha = std::max(alpha, eval);
-			if (beta <= alpha) break; // Отсечение
+			if (beta <= alpha) break;
 		}
-		return maxEvalute;
+		return maxEvaluate;
 	}
-
 	else
 	{
-		int minEvalute = std::numeric_limits<int>::max();
+		int minEvaluate = std::numeric_limits<int>::max();
 		for (const auto& move : GetAvailableMoves())
 		{
 			board[move.row][move.column] = PLAYER2;
 			int eval = AlphaBeta(depth - 1, alpha, beta, PLAYER1);
 			board[move.row][move.column] = NONE;
-			minEvalute = std::min(minEvalute, eval);
-			beta = std::max(beta, eval);
-			if (beta <= alpha) break; // Отсечение
+			minEvaluate = std::min(minEvaluate, eval);
+			beta = std::min(beta, eval);
+			if (beta <= alpha) break;
 		}
-		return minEvalute;
+		return minEvaluate;
 	}
 }
 
@@ -199,7 +207,7 @@ void ConnectFourGame::PrintBoard() const
 		std::cout << '|' << std::endl;
 	}
 	std::cout << "---------------" << std::endl;
-	std::cout << "Столбцы: ";
+	std::cout << " ";
 	for (int col = 1; col <= COLS; col++)
 	{
 		std::cout << col << " ";
