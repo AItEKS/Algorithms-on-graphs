@@ -5,108 +5,108 @@
 #include <algorithm>
 #include <cmath>
 
-// Структура для хранения пути муравья
+// РЎС‚СЂСѓРєС‚СѓСЂР° РґР»СЏ С…СЂР°РЅРµРЅРёСЏ РїСѓС‚Рё РјСѓСЂР°РІСЊСЏ
 struct AntPath {
-    std::vector<std::size_t> vertices; // Вершины, которые посещает муравей
-    double distance = 0; // Общая длина пути
+    std::vector<std::size_t> vertices; // Р’РµСЂС€РёРЅС‹, РєРѕС‚РѕСЂС‹Рµ РїРѕСЃРµС‰Р°РµС‚ РјСѓСЂР°РІРµР№
+    double distance = 0; // РћР±С‰Р°СЏ РґР»РёРЅР° РїСѓС‚Рё
 };
 
-// Структура для представления муравья
+// РЎС‚СЂСѓРєС‚СѓСЂР° РґР»СЏ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёСЏ РјСѓСЂР°РІСЊСЏ
 struct Ant {
     explicit Ant(std::size_t start_vertex = 0) : start_location(start_vertex), current_location(start_vertex) {}
 
-    AntPath path; // Путь муравья
-    std::vector<std::size_t> visited; // Посещенные вершины
-    std::size_t start_location = 0; // Начальная вершина
-    std::size_t current_location = 0; // Текущая вершина
-    bool can_continue = true; // Может ли муравей продолжать движение
+    AntPath path; // РџСѓС‚СЊ РјСѓСЂР°РІСЊСЏ
+    std::vector<std::size_t> visited; // РџРѕСЃРµС‰РµРЅРЅС‹Рµ РІРµСЂС€РёРЅС‹
+    std::size_t start_location = 0; // РќР°С‡Р°Р»СЊРЅР°СЏ РІРµСЂС€РёРЅР°
+    std::size_t current_location = 0; // РўРµРєСѓС‰Р°СЏ РІРµСЂС€РёРЅР°
+    bool can_continue = true; // РњРѕР¶РµС‚ Р»Рё РјСѓСЂР°РІРµР№ РїСЂРѕРґРѕР»Р¶Р°С‚СЊ РґРІРёР¶РµРЅРёРµ
 
-    void MakeChoice(const Graph& g, const std::vector<std::vector<double>>& p, double a, double b); // Метод для выбора следующей вершины
-    double getRandomChoice(); // Метод для получения случайного числа
-    std::vector<std::size_t> getNeighborVertexes(const Graph& g); // Метод для получения соседних вершин
+    void MakeChoice(const Graph& g, const std::vector<std::vector<double>>& p, double a, double b); // РњРµС‚РѕРґ РґР»СЏ РІС‹Р±РѕСЂР° СЃР»РµРґСѓСЋС‰РµР№ РІРµСЂС€РёРЅС‹
+    double getRandomChoice(); // РњРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЃР»СѓС‡Р°Р№РЅРѕРіРѕ С‡РёСЃР»Р°
+    std::vector<std::size_t> getNeighborVertexes(const Graph& g); // РњРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЃРѕСЃРµРґРЅРёС… РІРµСЂС€РёРЅ
 };
 
-// Класс для реализации алгоритма оптимизации муравьиной колонии
+// РљР»Р°СЃСЃ РґР»СЏ СЂРµР°Р»РёР·Р°С†РёРё Р°Р»РіРѕСЂРёС‚РјР° РѕРїС‚РёРјРёР·Р°С†РёРё РјСѓСЂР°РІСЊРёРЅРѕР№ РєРѕР»РѕРЅРёРё
 class AntColonyOptimization {
 public:
-    explicit AntColonyOptimization(const Graph& graph); // Конструктор с графом
+    explicit AntColonyOptimization(const Graph& graph); // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ РіСЂР°С„РѕРј
 
-    AntPath SolveSalesmansProblem(); // Метод для решения задачи коммивояжера
+    AntPath SolveSalesmansProblem(); // РњРµС‚РѕРґ РґР»СЏ СЂРµС€РµРЅРёСЏ Р·Р°РґР°С‡Рё РєРѕРјРјРёРІРѕСЏР¶РµСЂР°
 
 private:
-    const double kAlpha_ = 1.5; // Параметр альфа (влияние феромонов)
-    const double kBeta_ = 1.2; // Параметр бета (влияние расстояния)
-    const double kPheromone0_ = 0.6; // Начальное количество феромона
-    const double kQ_ = 10.0; // Константа для обновления феромонов
-    const double kEvaporation_ = 0.2; // Коэффициент испарения феромонов
+    const double kAlpha_ = 1.5; // РџР°СЂР°РјРµС‚СЂ Р°Р»СЊС„Р° (РІР»РёСЏРЅРёРµ С„РµСЂРѕРјРѕРЅРѕРІ)
+    const double kBeta_ = 1.2; // РџР°СЂР°РјРµС‚СЂ Р±РµС‚Р° (РІР»РёСЏРЅРёРµ СЂР°СЃСЃС‚РѕСЏРЅРёСЏ)
+    const double kPheromone0_ = 0.6; // РќР°С‡Р°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ С„РµСЂРѕРјРѕРЅР°
+    const double kQ_ = 10.0; // РљРѕРЅСЃС‚Р°РЅС‚Р° РґР»СЏ РѕР±РЅРѕРІР»РµРЅРёСЏ С„РµСЂРѕРјРѕРЅРѕРІ
+    const double kEvaporation_ = 0.2; // РљРѕСЌС„С„РёС†РёРµРЅС‚ РёСЃРїР°СЂРµРЅРёСЏ С„РµСЂРѕРјРѕРЅРѕРІ
 
-    Graph graph_; // Граф, представляющий задачу
-    std::vector<std::vector<double>> pheromone_; // Матрица феромонов
-    std::vector<Ant> ants_; // Вектор муравьев
+    Graph graph_; // Р“СЂР°С„, РїСЂРµРґСЃС‚Р°РІР»СЏСЋС‰РёР№ Р·Р°РґР°С‡Сѓ
+    std::vector<std::vector<double>> pheromone_; // РњР°С‚СЂРёС†Р° С„РµСЂРѕРјРѕРЅРѕРІ
+    std::vector<Ant> ants_; // Р’РµРєС‚РѕСЂ РјСѓСЂР°РІСЊРµРІ
 
-    void CreateAnts(); // Метод для создания муравьев
-    void UpdateGlobalPheromone(const std::vector<std::vector<double>>& local_pheromone_update); // Метод для обновления глобальных феромонов
+    void CreateAnts(); // РњРµС‚РѕРґ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РјСѓСЂР°РІСЊРµРІ
+    void UpdateGlobalPheromone(const std::vector<std::vector<double>>& local_pheromone_update); // РњРµС‚РѕРґ РґР»СЏ РѕР±РЅРѕРІР»РµРЅРёСЏ РіР»РѕР±Р°Р»СЊРЅС‹С… С„РµСЂРѕРјРѕРЅРѕРІ
 };
 
-// Конструктор класса AntColonyOptimization, инициализирует граф и матрицу феромонов
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР° AntColonyOptimization, РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚ РіСЂР°С„ Рё РјР°С‚СЂРёС†Сѓ С„РµСЂРѕРјРѕРЅРѕРІ
 AntColonyOptimization::AntColonyOptimization(const Graph& graph)
     : graph_(graph), pheromone_(graph.GetSize(), std::vector<double>(graph.GetSize(), kPheromone0_)) {}
 
-// Метод для создания муравьев
+// РњРµС‚РѕРґ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РјСѓСЂР°РІСЊРµРІ
 void AntColonyOptimization::CreateAnts() {
-    const auto kAntsCount = 50; // Количество муравьев
-    ants_.resize(kAntsCount); // Резервируем место для муравьев
+    const auto kAntsCount = 50; // РљРѕР»РёС‡РµСЃС‚РІРѕ РјСѓСЂР°РІСЊРµРІ
+    ants_.resize(kAntsCount); // Р РµР·РµСЂРІРёСЂСѓРµРј РјРµСЃС‚Рѕ РґР»СЏ РјСѓСЂР°РІСЊРµРІ
 
     for (std::size_t i = 0; i < kAntsCount; ++i)
-        ants_[i] = Ant(i % graph_.GetSize()); // Инициализируем каждого муравья с начальной вершиной
+        ants_[i] = Ant(i % graph_.GetSize()); // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РєР°Р¶РґРѕРіРѕ РјСѓСЂР°РІСЊСЏ СЃ РЅР°С‡Р°Р»СЊРЅРѕР№ РІРµСЂС€РёРЅРѕР№
 }
 
-// Метод для обновления глобальных феромонов на основе локального обновления феромонов
+// РњРµС‚РѕРґ РґР»СЏ РѕР±РЅРѕРІР»РµРЅРёСЏ РіР»РѕР±Р°Р»СЊРЅС‹С… С„РµСЂРѕРјРѕРЅРѕРІ РЅР° РѕСЃРЅРѕРІРµ Р»РѕРєР°Р»СЊРЅРѕРіРѕ РѕР±РЅРѕРІР»РµРЅРёСЏ С„РµСЂРѕРјРѕРЅРѕРІ
 void AntColonyOptimization::UpdateGlobalPheromone(const std::vector<std::vector<double>>& lpu) {
     for (std::size_t from = 0; from < pheromone_.size(); ++from) {
         for (std::size_t to = 0; to < pheromone_[from].size(); ++to) {
-            pheromone_[from][to] = (1 - kEvaporation_) * pheromone_[from][to] + lpu[from][to]; // Обновляем феромоны с учетом испарения и локального обновления
-            if (pheromone_[from][to] < 0.01 && from != to) // Устанавливаем минимальное значение феромона
+            pheromone_[from][to] = (1 - kEvaporation_) * pheromone_[from][to] + lpu[from][to]; // РћР±РЅРѕРІР»СЏРµРј С„РµСЂРѕРјРѕРЅС‹ СЃ СѓС‡РµС‚РѕРј РёСЃРїР°СЂРµРЅРёСЏ Рё Р»РѕРєР°Р»СЊРЅРѕРіРѕ РѕР±РЅРѕРІР»РµРЅРёСЏ
+            if (pheromone_[from][to] < 0.01 && from != to) // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РјРёРЅРёРјР°Р»СЊРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ С„РµСЂРѕРјРѕРЅР°
                 pheromone_[from][to] = 0.01;
         }
     }
 }
 
-// Метод для получения случайного числа в диапазоне [0, 1)
+// РњРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЃР»СѓС‡Р°Р№РЅРѕРіРѕ С‡РёСЃР»Р° РІ РґРёР°РїР°Р·РѕРЅРµ [0, 1)
 double Ant::getRandomChoice() {
-    static std::random_device rd; // Генератор случайных чисел
+    static std::random_device rd; // Р“РµРЅРµСЂР°С‚РѕСЂ СЃР»СѓС‡Р°Р№РЅС‹С… С‡РёСЃРµР»
     static std::mt19937 gen(rd());
     static std::uniform_real_distribution<> dis(0.0, 1.0);
-    return dis(gen); // Возвращаем случайное число
+    return dis(gen); // Р’РѕР·РІСЂР°С‰Р°РµРј СЃР»СѓС‡Р°Р№РЅРѕРµ С‡РёСЃР»Рѕ
 }
 
-// Метод для получения соседних вершин текущей вершины муравья в графе
+// РњРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЃРѕСЃРµРґРЅРёС… РІРµСЂС€РёРЅ С‚РµРєСѓС‰РµР№ РІРµСЂС€РёРЅС‹ РјСѓСЂР°РІСЊСЏ РІ РіСЂР°С„Рµ
 std::vector<std::size_t> Ant::getNeighborVertexes(const Graph& g) {
     std::vector<std::size_t> vertexes;
 
-    for (std::size_t to = 0; to < g.GetSize(); ++to) { // Проходим по всем вершинам графа
-        bool edge_is_exist = g.GetMatrix()[current_location][to] != 0; // Проверяем наличие ребра между текущей и соседней вершиной
-        bool vertex_is_unvisited = std::find(visited.begin(), visited.end(), to) == visited.end(); // Проверяем, была ли соседняя вершина посещена
+    for (std::size_t to = 0; to < g.GetSize(); ++to) { // РџСЂРѕС…РѕРґРёРј РїРѕ РІСЃРµРј РІРµСЂС€РёРЅР°Рј РіСЂР°С„Р°
+        bool edge_is_exist = g.GetMatrix()[current_location][to] != 0; // РџСЂРѕРІРµСЂСЏРµРј РЅР°Р»РёС‡РёРµ СЂРµР±СЂР° РјРµР¶РґСѓ С‚РµРєСѓС‰РµР№ Рё СЃРѕСЃРµРґРЅРµР№ РІРµСЂС€РёРЅРѕР№
+        bool vertex_is_unvisited = std::find(visited.begin(), visited.end(), to) == visited.end(); // РџСЂРѕРІРµСЂСЏРµРј, Р±С‹Р»Р° Р»Рё СЃРѕСЃРµРґРЅСЏСЏ РІРµСЂС€РёРЅР° РїРѕСЃРµС‰РµРЅР°
 
         if (edge_is_exist && vertex_is_unvisited) {
-            vertexes.push_back(to); // Добавляем соседнюю вершину в список если она доступна и не посещена
+            vertexes.push_back(to); // Р”РѕР±Р°РІР»СЏРµРј СЃРѕСЃРµРґРЅСЋСЋ РІРµСЂС€РёРЅСѓ РІ СЃРїРёСЃРѕРє РµСЃР»Рё РѕРЅР° РґРѕСЃС‚СѓРїРЅР° Рё РЅРµ РїРѕСЃРµС‰РµРЅР°
         }
     }
 
-    return vertexes; // Возвращаем список соседних вершин
+    return vertexes; // Р’РѕР·РІСЂР°С‰Р°РµРј СЃРїРёСЃРѕРє СЃРѕСЃРµРґРЅРёС… РІРµСЂС€РёРЅ
 }
 
-// Метод для выбора следующей вершины на основе вероятности и феромонов
+// РњРµС‚РѕРґ РґР»СЏ РІС‹Р±РѕСЂР° СЃР»РµРґСѓСЋС‰РµР№ РІРµСЂС€РёРЅС‹ РЅР° РѕСЃРЅРѕРІРµ РІРµСЂРѕСЏС‚РЅРѕСЃС‚Рё Рё С„РµСЂРѕРјРѕРЅРѕРІ
 void Ant::MakeChoice(const Graph& g, const std::vector<std::vector<double>>& p, double alpha, double beta) {
     if (path.vertices.empty()) {
-        path.vertices.push_back(current_location); // Добавляем начальную вершину в путь 
+        path.vertices.push_back(current_location); // Р”РѕР±Р°РІР»СЏРµРј РЅР°С‡Р°Р»СЊРЅСѓСЋ РІРµСЂС€РёРЅСѓ РІ РїСѓС‚СЊ 
         visited.push_back(current_location);
     }
 
-    std::vector<std::size_t> neighbor_vertexes = getNeighborVertexes(g); // Получаем соседние вершины
+    std::vector<std::size_t> neighbor_vertexes = getNeighborVertexes(g); // РџРѕР»СѓС‡Р°РµРј СЃРѕСЃРµРґРЅРёРµ РІРµСЂС€РёРЅС‹
 
     if (neighbor_vertexes.empty()) {
-        can_continue = false; // Если нет доступных соседей, останавливаемся 
+        can_continue = false; // Р•СЃР»Рё РЅРµС‚ РґРѕСЃС‚СѓРїРЅС‹С… СЃРѕСЃРµРґРµР№, РѕСЃС‚Р°РЅР°РІР»РёРІР°РµРјСЃСЏ 
         if (g.GetMatrix()[current_location][start_location] != 0) {
             path.vertices.push_back(start_location);
             path.distance += g.GetMatrix()[current_location][start_location];
@@ -158,7 +158,7 @@ void Ant::MakeChoice(const Graph& g, const std::vector<std::vector<double>>& p, 
     }
 }
 
-// Метод для решения задачи коммивояжера с использованием алгоритма оптимизации муравьиной колонии
+// РњРµС‚РѕРґ РґР»СЏ СЂРµС€РµРЅРёСЏ Р·Р°РґР°С‡Рё РєРѕРјРјРёРІРѕСЏР¶РµСЂР° СЃ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµРј Р°Р»РіРѕСЂРёС‚РјР° РѕРїС‚РёРјРёР·Р°С†РёРё РјСѓСЂР°РІСЊРёРЅРѕР№ РєРѕР»РѕРЅРёРё
 AntPath AntColonyOptimization::SolveSalesmansProblem() {
     constexpr std::size_t kMaxIterationsWithoutImprovement = 10;
     const std::size_t kVertexesCount = graph_.GetSize();

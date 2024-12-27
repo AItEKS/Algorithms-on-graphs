@@ -196,7 +196,7 @@ std::vector<unsigned long long int> Graph::Dijkstra(size_t start, size_t end) co
     return distances;
 }
 
-//Теорема Оре
+//РўРµРѕСЂРµРјР° РћСЂРµ
 bool Graph::HasHamiltonianCycle() const {
     if (size < 3) return false;
 
@@ -228,7 +228,7 @@ bool Graph::HasHamiltonianCycle() const {
 }
 
 void Graph::CompleteHamiltonianCycle() {
-    // Вычисляем степени вершин
+    // Р’С‹С‡РёСЃР»СЏРµРј СЃС‚РµРїРµРЅРё РІРµСЂС€РёРЅ
     std::vector<size_t> degrees(size, 0);
     for (size_t i = 0; i < size; ++i) {
         for (size_t j = 0; j < size; ++j) {
@@ -240,12 +240,12 @@ void Graph::CompleteHamiltonianCycle() {
 
     size_t addedEdges = 0;
 
-    // Добавление недостающих рёбер
+    // Р”РѕР±Р°РІР»РµРЅРёРµ РЅРµРґРѕСЃС‚Р°СЋС‰РёС… СЂС‘Р±РµСЂ
     for (size_t u = 0; u < size; ++u) {
         for (size_t v = u + 1; v < size; ++v) {
-            if (matrix[u][v] == 0) { // Если нет ребра
+            if (matrix[u][v] == 0) { // Р•СЃР»Рё РЅРµС‚ СЂРµР±СЂР°
                 if (degrees[u] + degrees[v] < size) {
-                    // Добавляем ребро между u и v
+                    // Р”РѕР±Р°РІР»СЏРµРј СЂРµР±СЂРѕ РјРµР¶РґСѓ u Рё v
                     Add(u, v, 1);
                     degrees[u]++;
                     degrees[v]++;
@@ -255,6 +255,6 @@ void Graph::CompleteHamiltonianCycle() {
         }
     }
 
-    // Вывод количества добавленных рёбер
-    std::cout << "Количество добавленных рёбер: " << addedEdges << std::endl;
+    // Р’С‹РІРѕРґ РєРѕР»РёС‡РµСЃС‚РІР° РґРѕР±Р°РІР»РµРЅРЅС‹С… СЂС‘Р±РµСЂ
+    std::cout << "РљРѕР»РёС‡РµСЃС‚РІРѕ РґРѕР±Р°РІР»РµРЅРЅС‹С… СЂС‘Р±РµСЂ: " << addedEdges << std::endl;
 }
