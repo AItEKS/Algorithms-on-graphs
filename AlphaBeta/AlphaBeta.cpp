@@ -1,4 +1,4 @@
-﻿#include "AlphaBeta.h"
+#include "AlphaBeta.h"
 
 
 bool ConnectFourGame::isWinningMove(Player player)

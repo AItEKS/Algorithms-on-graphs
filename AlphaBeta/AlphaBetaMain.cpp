@@ -6,13 +6,13 @@ int main()
     setlocale(LC_ALL, "");
     ConnectFourGame game;
 
-    std::cout << "\t\t\t\t\t\tÈãðà «×åòûðå â ðÿä» \n" << std::endl;
+    std::cout << "\t\t\t\t\t\tÐ˜Ð³Ñ€Ð° Â«Ð§ÐµÑ‚Ñ‹Ñ€Ðµ Ð² Ñ€ÑÐ´Â» \n" << std::endl;
 
     int difficult = 3;
-    std::cout << "Ââåäèòå ñëîæíîñòü èãðû(1-10): "; std::cin >> difficult;
+    std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÑÐ»Ð¾Ð¶Ð½Ð¾ÑÑ‚ÑŒ Ð¸Ð³Ñ€Ñ‹(1-10): "; std::cin >> difficult;
     while (difficult <= 0 || difficult > 10)
     {
-        std::cout << "Íåâåðíûé ââîä! Ïîïðîáóéòå ââåñòè ñëîæíîñòü ñíîâà: "; std::cin >> difficult;
+        std::cout << "ÐÐµÐ²ÐµÑ€Ð½Ñ‹Ð¹ Ð²Ð²Ð¾Ð´! ÐŸÐ¾Ð¿Ñ€Ð¾Ð±ÑƒÐ¹Ñ‚Ðµ Ð²Ð²ÐµÑÑ‚Ð¸ ÑÐ»Ð¾Ð¶Ð½Ð¾ÑÑ‚ÑŒ ÑÐ½Ð¾Ð²Ð°: "; std::cin >> difficult;
     }
 
     // Computer makes the first move
@@ -23,7 +23,7 @@ int main()
     if (game.isWinningMove(PLAYER1))
     {
         game.PrintBoard();
-        std::cout << "Êîìïüþòåð âûèãðàë ñ ïåðâîãî õîäà!" << std::endl;
+        std::cout << "ÐšÐ¾Ð¼Ð¿ÑŒÑŽÑ‚ÐµÑ€ Ð²Ñ‹Ð¸Ð³Ñ€Ð°Ð» Ñ Ð¿ÐµÑ€Ð²Ð¾Ð³Ð¾ Ñ…Ð¾Ð´Ð°!" << std::endl;
         return 0; // End the game if computer wins
     }
 
@@ -34,11 +34,11 @@ int main()
         game.PrintBoard();
 
         int userMove;
-        std::cout << "Ââåäèòå íîìåð êîëîíêè äëÿ âàøåãî õîäà: "; std::cin >> userMove;
+        std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð¾Ð¼ÐµÑ€ ÐºÐ¾Ð»Ð¾Ð½ÐºÐ¸ Ð´Ð»Ñ Ð²Ð°ÑˆÐµÐ³Ð¾ Ñ…Ð¾Ð´Ð°: "; std::cin >> userMove;
 
         while (userMove <= 0 || userMove > COLS || game.GetAvailableRow(userMove - 1) == -1)
         {
-            std::cout << "Íåâåðíûé ââîä! Ïîïðîáóéòå ââåñòè ñíîâà: "; std::cin >> userMove;
+            std::cout << "ÐÐµÐ²ÐµÑ€Ð½Ñ‹Ð¹ Ð²Ð²Ð¾Ð´! ÐŸÐ¾Ð¿Ñ€Ð¾Ð±ÑƒÐ¹Ñ‚Ðµ Ð²Ð²ÐµÑÑ‚Ð¸ ÑÐ½Ð¾Ð²Ð°: "; std::cin >> userMove;
         }
 
         userMove--;
@@ -49,7 +49,7 @@ int main()
         if (game.isWinningMove(PLAYER2))
         {
             game.PrintBoard();
-            std::cout << "Ïîçäðàâëÿþ! Âû âûèãðàëè êîìïüþòåð!" << std::endl;
+            std::cout << "ÐŸÐ¾Ð·Ð´Ñ€Ð°Ð²Ð»ÑÑŽ! Ð’Ñ‹ Ð²Ñ‹Ð¸Ð³Ñ€Ð°Ð»Ð¸ ÐºÐ¾Ð¼Ð¿ÑŒÑŽÑ‚ÐµÑ€!" << std::endl;
             break;
         }
 
@@ -61,7 +61,7 @@ int main()
         if (game.isWinningMove(PLAYER1))
         {
             game.PrintBoard();
-            std::cout << "Âû ïðîèãðàëè!" << std::endl;
+            std::cout << "Ð’Ñ‹ Ð¿Ñ€Ð¾Ð¸Ð³Ñ€Ð°Ð»Ð¸!" << std::endl;
             break;
         }
     }
