@@ -1,50 +1,70 @@
 #include <iostream>
-
 #include "AlphaBeta.h"
-
 
 int main()
 {
-	setlocale(LC_ALL, "");
-	ConnectFourGame game;
+    setlocale(LC_ALL, "");
+    ConnectFourGame game;
 
-	while (true)
-	{
-		game.PrintBoard();
+    std::cout << "\t\t\t\t\t\tИгра «Четыре в ряд» \n" << std::endl;
 
-		int userMove;
-		std::cout << "Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ РєРѕР»РѕРЅРєРё РґР»СЏ РІР°С€РµРіРѕ С…РѕРґР°: "; std::cin >> userMove;
+    int difficult = 3;
+    std::cout << "Введите сложность игры(1-10): "; std::cin >> difficult;
+    while (difficult <= 0 || difficult > 10)
+    {
+        std::cout << "Неверный ввод! Попробуйте ввести сложность снова: "; std::cin >> difficult;
+    }
 
-		while (userMove <= 0 || userMove > COLS || game.GetAvailableRow(userMove - 1) == -1)
-		{
-			std::cout << "РќРµРІРµСЂРЅС‹Р№ РІРІРѕРґ! РџРѕРїСЂРѕР±СѓР№С‚Рµ РІРІРµСЃС‚Рё СЃРЅРѕРІР°: "; std::cin >> userMove;
-		}
+    // Computer makes the first move
+    Move bestMove = game.FindBestMove(difficult + 4);
+    game.SetBoard(bestMove.row, bestMove.column, PLAYER1);
 
-		userMove--;
+    // Check if computer wins immediately
+    if (game.isWinningMove(PLAYER1))
+    {
+        game.PrintBoard();
+        std::cout << "Компьютер выиграл с первого хода!" << std::endl;
+        return 0; // End the game if computer wins
+    }
 
-		Move userColMove{ userMove, game.GetAvailableRow(userMove) };
-		game.SetBoard(userColMove.row, userColMove.column, PLAYER2);
+    std::cout << std::endl;
 
-		if (game.isWinningMove(PLAYER2))
-		{
-			game.PrintBoard();
-			std::cout << "РџРѕР·РґСЂР°РІР»СЏСЋ! Р’С‹ РІС‹РёРіСЂР°Р»Рё РєРѕРјРїСЊСЋС‚РµСЂ!" << std::endl;
-			break;
-		}
-		
-		game.PrintBoard();
+    while (true)
+    {
+        game.PrintBoard();
 
-		Move bestMove = game.FindBestMove(8);
+        int userMove;
+        std::cout << "Введите номер колонки для вашего хода: "; std::cin >> userMove;
 
-		game.SetBoard(bestMove.row, bestMove.column, PLAYER1);
+        while (userMove <= 0 || userMove > COLS || game.GetAvailableRow(userMove - 1) == -1)
+        {
+            std::cout << "Неверный ввод! Попробуйте ввести снова: "; std::cin >> userMove;
+        }
 
-		if (game.isWinningMove(PLAYER1))
-		{
-			game.PrintBoard();
-			std::cout << "Р’С‹ РїСЂРѕРёРіСЂР°Р»Рё!" << std::endl;
-			break;
-		}
-	}
+        userMove--;
 
-	return 0;
+        Move userColMove{ userMove, game.GetAvailableRow(userMove) };
+        game.SetBoard(userColMove.row, userColMove.column, PLAYER2);
+
+        if (game.isWinningMove(PLAYER2))
+        {
+            game.PrintBoard();
+            std::cout << "Поздравляю! Вы выиграли компьютер!" << std::endl;
+            break;
+        }
+
+        // Computer's turn
+        game.PrintBoard();
+        bestMove = game.FindBestMove(difficult + 4);
+        game.SetBoard(bestMove.row, bestMove.column, PLAYER1);
+
+        if (game.isWinningMove(PLAYER1))
+        {
+            game.PrintBoard();
+            std::cout << "Вы проиграли!" << std::endl;
+            break;
+        }
+    }
+
+    return 0;
 }

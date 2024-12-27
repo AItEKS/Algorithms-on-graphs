@@ -1,4 +1,4 @@
-#include "AlphaBeta.h"
+﻿#include "AlphaBeta.h"
 
 
 bool ConnectFourGame::isWinningMove(Player player)
@@ -43,11 +43,11 @@ int ConnectFourGame::evaluteBoard(Player player)
 	auto countScore = [&](int count, bool isOpponent) {
 		switch (count)
 		{
-		case 4: return isOpponent ? -10000 : 10000; // 4 в ряд (противник - большой штраф)
-		case 3: return isOpponent ? -500 : 500;     // 3 в ряд (противник - штраф)
-		case 2: return isOpponent ? -10 : 10;       // 2 в ряд
-		case 1: return isOpponent ? -1 : 1;         // 1 фишка
-		default: return 0;                          // ничего не даем
+		case 4: return isOpponent ? -1000000 : 1000000; // 4 in a row
+		case 3: return isOpponent ? -100 : 100;         // 3 in a row
+		case 2: return isOpponent ? -10 : 10;           // 2 in a row
+		case 1: return isOpponent ? -1 : 1;             // 1 piece
+		default: return 0;                              // no score
 		}
 		};
 
@@ -57,7 +57,10 @@ int ConnectFourGame::evaluteBoard(Player player)
 		{
 			if (board[row][col] == NONE) continue;
 
-			// Горизонтальная проверка (-)
+			// Weight for center control
+			if (col == COLS / 2) score += (board[row][col] == player) ? 3 : -3;
+
+			// Horizontal check
 			if (col + 3 < COLS)
 			{
 				int countPlayer = 0, countOpponent = 0;
@@ -69,7 +72,7 @@ int ConnectFourGame::evaluteBoard(Player player)
 				score += (countScore(countPlayer, false) + countScore(countOpponent, true));
 			}
 
-			// Вертикальная проверка (|)
+			// Vertical check
 			if (row + 3 < ROWS)
 			{
 				int countPlayer = 0, countOpponent = 0;
@@ -81,7 +84,7 @@ int ConnectFourGame::evaluteBoard(Player player)
 				score += (countScore(countPlayer, false) + countScore(countOpponent, true));
 			}
 
-			// Диагональная проверка (\)
+			// Diagonal check (\)
 			if (row + 3 < ROWS && col + 3 < COLS)
 			{
 				int countPlayer = 0, countOpponent = 0;
@@ -93,7 +96,7 @@ int ConnectFourGame::evaluteBoard(Player player)
 				score += (countScore(countPlayer, false) + countScore(countOpponent, true));
 			}
 
-			// Диагональная проверка (/)
+			// Diagonal check (/)
 			if (row + 3 < ROWS && col - 3 >= 0)
 			{
 				int countPlayer = 0, countOpponent = 0;
@@ -138,7 +141,7 @@ int ConnectFourGame::AlphaBeta(int depth, int alpha, int beta, Player currentPla
 	}
 
 	bool win = isWinningMove(currentPlayer);
-	if (win) return (currentPlayer == PLAYER1) ? 10000 : -10000;
+	if (win) return (currentPlayer == PLAYER1) ? 1000000 : -1000000;
 
 	if (currentPlayer == PLAYER1)
 	{
