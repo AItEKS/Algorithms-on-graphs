@@ -18,9 +18,86 @@ Graph::Graph(const std::vector<std::vector<unsigned long long int>>& weightsMatr
     matrix = weightsMatrix;
 }
 
+Graph::Graph(const nlohmann::json& json) {
+    if (!json.is_array()) {
+        throw std::invalid_argument("Invalid JSON format: Expected an array.");
+    }
+
+    size = json.size();
+    matrix.resize(size, std::vector<unsigned long long int>(size, 0));
+
+    for (size_t i = 0; i < size; ++i) {
+        if (!json[i].is_array() || json[i].size() != size) {
+            throw std::invalid_argument("Invalid JSON format: Each row must be an array of equal length.");
+        }
+
+        for (size_t j = 0; j < size; ++j) {
+            matrix[i][j] = json[i][j].get<unsigned long long int>();
+        }
+    }
+}
+
+Graph::Graph(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        throw std::invalid_argument("Could not open the file: " + filename);
+    }
+
+    std::string line;
+    size_t maxNode = 0;
+
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        size_t source, target;
+        unsigned long long weight;
+
+        if (!(iss >> source >> target >> weight)) {
+            throw std::invalid_argument("Invalid file format.");
+        }
+
+        maxNode = std::max({ maxNode, source, target });
+    }
+
+    size = maxNode + 1;
+    Init(size);
+
+    file.clear();
+    file.seekg(0);
+
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        size_t source, target;
+        unsigned long long weight;
+
+        if (!(iss >> source >> target >> weight)) {
+            throw std::invalid_argument("Invalid file format.");
+        }
+
+        Add(source, target, weight);
+    }
+
+    //int sum = 0, k = 0;
+    //for (size_t i = 0; i < size; i++) {
+    //    for (size_t j = 0; j < size; j++) {
+    //        if (matrix[i][j] != 0) {
+    //            sum += matrix[i][j];
+    //            k++;
+    //        }
+    //    }
+    //}
+
+    //for (size_t i = 0; i < size; i++) {
+    //    for (size_t j = 0; j < size; j++) {
+    //        if (matrix[i][j] == 0) {
+    //            matrix[i][j] = sum / k;
+    //        }
+    //    }
+    //}
+}
+
 void Graph::Add(size_t a, size_t b, int weight) {
     matrix[a][b] = weight;
-    //matrix[b][a] = weight;
+    matrix[b][a] = weight;
 }
 
 void Graph::Copy(const Graph& graph) {
@@ -117,4 +194,67 @@ std::vector<unsigned long long int> Graph::Dijkstra(size_t start, size_t end) co
     }
 
     return distances;
+}
+
+//Теорема Оре
+bool Graph::HasHamiltonianCycle() const {
+    if (size < 3) return false;
+
+    std::vector<size_t> degrees(size, 0);
+
+    for (size_t i = 0; i < size; ++i) {
+        for (size_t j = 0; j < size; ++j) {
+            if (matrix[i][j] != 0) {
+                degrees[i]++;
+            }
+        }
+    }
+
+    for (size_t u = 0; u < size; ++u) {
+        for (size_t v = u + 1; v < size; ++v) {
+            if (matrix[u][v] == 0) { 
+                if (degrees[u] + degrees[v] < size) {
+                    return false;
+                }
+            }
+        }
+    }
+
+    //for (size_t i = 0; i < size; ++i) {
+    //    std::cout << degrees[i] << " ";
+    //}
+
+    return true;
+}
+
+void Graph::CompleteHamiltonianCycle() {
+    // Вычисляем степени вершин
+    std::vector<size_t> degrees(size, 0);
+    for (size_t i = 0; i < size; ++i) {
+        for (size_t j = 0; j < size; ++j) {
+            if (matrix[i][j] != 0) {
+                degrees[i]++;
+            }
+        }
+    }
+
+    size_t addedEdges = 0;
+
+    // Добавление недостающих рёбер
+    for (size_t u = 0; u < size; ++u) {
+        for (size_t v = u + 1; v < size; ++v) {
+            if (matrix[u][v] == 0) { // Если нет ребра
+                if (degrees[u] + degrees[v] < size) {
+                    // Добавляем ребро между u и v
+                    Add(u, v, 1);
+                    degrees[u]++;
+                    degrees[v]++;
+                    addedEdges++;
+                }
+            }
+        }
+    }
+
+    // Вывод количества добавленных рёбер
+    std::cout << "Количество добавленных рёбер: " << addedEdges << std::endl;
 }
